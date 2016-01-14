@@ -11,10 +11,13 @@ import django_filters
 
 class PfopNotifyView(views.APIView):
     def post(self, request):
-        inputKey = request.data.get('inputKey')
+        inputKey = request.data['inputKey']
         greeting = Greeting.objects.filter(key=inputKey).first()
         if greeting is not None:
+            newkey = request.data['items'][0]['key']
             greeting.data = request.data
+            greeting.url = greeting.url.replace(greeting.key, newkey)
+            greeting.key = None
             greeting.save()
         return response.Response(status.HTTP_204_NO_CONTENT)
 
