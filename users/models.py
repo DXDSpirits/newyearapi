@@ -1,5 +1,6 @@
 
 from django.db import models
+import jsonfield
 
 
 class User(models.Model):
@@ -23,6 +24,21 @@ class User(models.Model):
 
     def __unicode__(self):
         return self.username
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    avatar = models.URLField()
+    name = models.CharField()
+    data = jsonfield.JSONField()
+    last_modified = models.DateTimeField()
+
+    class Meta:
+        db_table = 'users_userprofile'
+        app_label = 'users'
+
+    def __unicode__(self):
+        return self.name
 
 
 class Token(models.Model):

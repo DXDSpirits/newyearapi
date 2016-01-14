@@ -1,5 +1,6 @@
 
 from django.db import models
+from users.models import UserProfile
 
 
 class Place(models.Model):
@@ -13,13 +14,11 @@ class Place(models.Model):
     name = models.CharField(max_length=50, blank=True, null=True)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return u'%s (%s)' % (unicode(self.name), self.category)
 
 
 class Greeting(models.Model):
     owner_id = models.IntegerField()
-
-    place = models.ForeignKey(Place, blank=True, null=True)
 
     title = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -27,6 +26,12 @@ class Greeting(models.Model):
     url = models.URLField(blank=True, null=True)
 
     time_created = models.DateTimeField(auto_now_add=True)
+
+    places = models.ManyToManyField(Place, blank=True)
+
+    @property
+    def profile(self):
+        return UserProfile.objects.filter(user_id=self.owner_id).first()
 
     def __unicode__(self):
         return unicode(self.url)
