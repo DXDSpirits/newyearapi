@@ -14,6 +14,7 @@ class PlaceSerializer(serializers.ModelSerializer):
 class GreetingSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
     places = PlaceSerializer(many=True, read_only=True)
+    key = serializers.CharField(write_only=True)
     place_id = serializers.IntegerField(write_only=True)
 
     def create(self, validated_data):
@@ -29,5 +30,5 @@ class GreetingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Greeting
-        fields = ['id', 'owner_id', 'time_created', 'url', 'profile', 'places', 'place_id']
+        fields = ['id', 'owner_id', 'time_created', 'url', 'profile', 'places', 'key', 'place_id']
         read_only_fields = ['owner_id']

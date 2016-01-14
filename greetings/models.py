@@ -2,6 +2,8 @@
 from django.db import models
 from users.models import UserProfile
 
+import jsonfield
+
 
 class Place(models.Model):
     CATEGORY = (('province', 'Province'),
@@ -19,13 +21,14 @@ class Place(models.Model):
 
 class Greeting(models.Model):
     owner_id = models.IntegerField()
+    time_created = models.DateTimeField(auto_now_add=True)
 
     title = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
+    key = models.CharField(max_length=200, blank=True, null=True, db_index=True)
     url = models.URLField(blank=True, null=True)
-
-    time_created = models.DateTimeField(auto_now_add=True)
+    data = jsonfield.JSONField(blank=True, null=True)
 
     places = models.ManyToManyField(Place, blank=True)
 
