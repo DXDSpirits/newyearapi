@@ -232,7 +232,7 @@ MEDIA_URL = '/media/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/api/static/'
 
 # Email and SMS
 
@@ -241,29 +241,6 @@ EMAIL_HOST = 'smtp.ym.163.com'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = 'api@wedfairy.com'
 EMAIL_HOST_PASSWORD = '********'
-
-SMS_OFF = DEBUG
-
-# Wechat
-
-WECHAT_APP = {
-    'composer': {
-        'APP_ID': '',
-        'APP_SECRET': ''
-    },
-    'hybrid': {
-        'APP_ID': '',
-        'APP_SECRET': ''
-    },
-}
-
-REDIS = {
-    'host': '127.0.0.1',
-    'port': 6379,
-    'user': '',
-    'pwd': '',
-    'password': ''
-}
 
 # Local settings
 
