@@ -1,5 +1,5 @@
 
-from rest_framework import viewsets, pagination
+from rest_framework import views, viewsets, pagination, response, status
 from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
 
 from .models import Place, Greeting
@@ -7,6 +7,16 @@ from .serializers import PlaceSerializer, GreetingSerializer
 from .permissions import IsOwnerOrReadOnly
 
 import django_filters
+
+
+class PfopNotifyView(views.APIView):
+    def post(self, request):
+        inputKey = request.data.get('inputKey')
+        greeting = Greeting.objects.filter(key=inputKey).first()
+        if greeting is not None:
+            greeting.data = request.data
+            greeting.save()
+        return response.Response(status.HTTP_204_NO_CONTENT)
 
 
 class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
