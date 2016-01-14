@@ -46,16 +46,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'rest_framework.authtoken',
     'corsheaders',
 
-    'users',
-    'sites',
-    'search',
-    'appstore',
-    'clients',
-    'vendors',
-    'notifications'
+    'greetings'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -100,7 +93,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'users.authentication.TokenAuthentication',
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -189,14 +182,14 @@ codecs.register(lambda name: codecs.lookup('utf8') if name == 'utf8mb4' else Non
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'teteatete',
+        'NAME': 'newyear',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {'charset': 'utf8mb4'},
     },
-    'readonly': {
+    'users': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'teteatete',
         'USER': 'root',
@@ -206,6 +199,8 @@ DATABASES = {
         'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
+
+DATABASE_ROUTERS = ['users.routers.UsersRouter']
 
 CACHES = {
     'default': {
