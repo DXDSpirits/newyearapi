@@ -1,5 +1,6 @@
 
 from rest_framework import viewsets, pagination
+from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
 
 from .models import Place, Greeting
 from .serializers import PlaceSerializer, GreetingSerializer
@@ -8,7 +9,8 @@ from .permissions import IsOwnerOrReadOnly
 import django_filters
 
 
-class PlaceViewSet(viewsets.ReadOnlyModelViewSet):
+class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
+                   viewsets.ReadOnlyModelViewSet):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
 
