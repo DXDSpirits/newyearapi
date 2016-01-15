@@ -17,8 +17,8 @@ class PfopNotifyView(views.APIView):
             newkey = request.data['items'][0]['key']
             greeting.data = request.data
             greeting.url = greeting.url.replace(greeting.key, newkey)
-            greeting.status = 'online'
             greeting.key = ''
+            greeting.status = 'online'
             greeting.save()
         return response.Response(status.HTTP_204_NO_CONTENT)
 

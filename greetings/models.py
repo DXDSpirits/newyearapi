@@ -1,5 +1,7 @@
 
 from django.db import models
+from django.db.models.signals import post_save
+
 from users.models import UserProfile
 
 import jsonfield
@@ -43,3 +45,12 @@ class Greeting(models.Model):
 
     def __unicode__(self):
         return unicode(self.url)
+
+
+def greeting_postsave(sender, instance, created, raw, **kwargs):
+    if instance.status == 'online':
+        Greeting.objects.filter(owner_id=instance.owner_id) \
+                        .exclude(pk=instance.pk) \
+                        .exclude(status='archived') \
+                        .update(status='archived')
+post_save.connect(greeting_postsave, sender=Greeting)
