@@ -10,7 +10,7 @@ class Place(models.Model):
                 ('city', 'City'),
                 ('district', 'District'),)
 
-    category = models.SlugField(blank=True, null=True, choices=CATEGORY)
+    category = models.SlugField(choices=CATEGORY, default='city')
     parent = models.ForeignKey('self', blank=True, null=True)
 
     name = models.CharField(max_length=50, blank=True, null=True)
@@ -20,12 +20,17 @@ class Place(models.Model):
 
 
 class Greeting(models.Model):
-    owner_id = models.IntegerField()
+    STATUS = (('raw', 'Raw'),
+              ('online', 'Online'),
+              ('archived', 'Archived'),)
+
+    owner_id = models.IntegerField(blank=True, null=True, db_index=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
     title = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
+    status = models.SlugField(choices=STATUS, default='raw')
     key = models.CharField(max_length=200, blank=True, null=True, db_index=True)
     url = models.URLField(blank=True, null=True)
     data = jsonfield.JSONField(blank=True, null=True)
