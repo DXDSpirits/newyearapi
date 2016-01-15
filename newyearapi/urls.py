@@ -8,5 +8,5 @@ urlpatterns = patterns('',
     url(r'^api/admin/', include(admin.site.urls)),
 
     url(r'^api/greetings/', include('greetings.urls')),
-    url(r'^(?P<path>api/clients/.*)$', ProxyView.as_view(upstream='http://localhost:8000')),
+    url(r'^(?P<path>api/clients/.*)$', ProxyView.as_view(upstream='http://api.wedfairy.com')),
 )
