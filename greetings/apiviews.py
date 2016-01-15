@@ -18,7 +18,7 @@ class PfopNotifyView(views.APIView):
             greeting.data = request.data
             greeting.url = greeting.url.replace(greeting.key, newkey)
             greeting.status = 'online'
-            greeting.key = None
+            greeting.key = ''
             greeting.save()
         return response.Response(status.HTTP_204_NO_CONTENT)
 
@@ -60,7 +60,7 @@ class GreetingPagination(pagination.PageNumberPagination):
 
 
 class GreetingViewSet(viewsets.ModelViewSet):
-    queryset = Greeting.objects.all()
+    queryset = Greeting.objects.filter(status='online')
     serializer_class = GreetingSerializer
     filter_class = GreetingFilter
     pagination_class = GreetingPagination

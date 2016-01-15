@@ -15,7 +15,7 @@ class PlaceGreetingSerializer(serializers.ModelSerializer):
     greetings = serializers.SerializerMethodField()
 
     def get_greetings(self, obj):
-        greetings = obj.greetings.all()
+        greetings = obj.greetings.filter(status='online')
         return greetings.count()
 
     class Meta:
