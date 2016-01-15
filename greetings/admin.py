@@ -14,5 +14,5 @@ class GreetingAdmin(admin.ModelAdmin):
         return ', '.join([p.name for p in instance.places.all()])
     placelist.short_description = "Places"
 
-    list_display = ['id', 'owner_id', 'time_created', 'key', 'url', 'placelist']
+    list_display = ['id', 'owner_id', 'time_created', 'status', 'key', 'url', 'placelist']
     filter_horizontal = ['places']

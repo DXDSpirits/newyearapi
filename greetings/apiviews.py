@@ -13,10 +13,11 @@ class PfopNotifyView(views.APIView):
     def post(self, request):
         inputKey = request.data['inputKey']
         greeting = Greeting.objects.filter(key=inputKey).first()
-        if greeting is not None:
+        if greeting is not None and greeting.status == 'raw':
             newkey = request.data['items'][0]['key']
             greeting.data = request.data
             greeting.url = greeting.url.replace(greeting.key, newkey)
+            greeting.status = 'online'
             greeting.key = None
             greeting.save()
         return response.Response(status.HTTP_204_NO_CONTENT)
@@ -66,4 +67,4 @@ class GreetingViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(owner_id=self.request.user.id)
+        serializer.save(owner_id=self.request.user.id, status='raw')

@@ -27,6 +27,7 @@ class GreetingSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
     places = PlaceSerializer(many=True, read_only=True)
     place_id = serializers.IntegerField(write_only=True)
+    key = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
         place_id = validated_data.pop('place_id')
@@ -41,5 +42,5 @@ class GreetingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Greeting
-        fields = ['id', 'owner_id', 'time_created', 'url', 'profile', 'places', 'key', 'place_id']
-        read_only_fields = ['owner_id']
+        fields = ['id', 'owner_id', 'time_created', 'url', 'status', 'profile', 'places', 'key', 'place_id']
+        read_only_fields = ['owner_id', 'status']
