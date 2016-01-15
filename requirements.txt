@@ -13,3 +13,4 @@ redis==2.10.3
 django-redis-cache==1.6.5
 drf-extensions==0.2.8
 newrelic==2.54.0.41
+django-revproxy==0.9.9
