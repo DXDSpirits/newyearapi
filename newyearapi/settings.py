@@ -236,6 +236,10 @@ MEDIA_URL = '/media/'
 
 STATIC_URL = '/api/static/'
 
+# Auth API
+
+AUTH_API_ROOT = 'http://api.wedfairy.com'
+
 # Email and SMS
 
 SERVER_EMAIL = 'api@wedfairy.com'
