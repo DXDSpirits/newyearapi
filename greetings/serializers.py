@@ -11,6 +11,18 @@ class PlaceSerializer(serializers.ModelSerializer):
         fields = ['id', 'category', 'parent', 'name']
 
 
+class PlaceGreetingSerializer(serializers.ModelSerializer):
+    greetings = serializers.SerializerMethodField()
+
+    def get_greetings(self, obj):
+        greetings = obj.greetings.all()
+        return greetings.count()
+
+    class Meta:
+        model = Place
+        fields = ['id', 'name', 'greetings']
+
+
 class GreetingSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
     places = PlaceSerializer(many=True, read_only=True)

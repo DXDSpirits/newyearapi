@@ -30,7 +30,7 @@ class Greeting(models.Model):
     url = models.URLField(blank=True, null=True)
     data = jsonfield.JSONField(blank=True, null=True)
 
-    places = models.ManyToManyField(Place, blank=True)
+    places = models.ManyToManyField(Place, blank=True, related_name="greetings")
 
     @property
     def profile(self):
