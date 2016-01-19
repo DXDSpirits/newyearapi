@@ -50,6 +50,29 @@ HTTP 200 OK
 ]
 ```
 
+## 行政区列表
+
+获取一个城市的行政区列表和每个区的祝福数量，**需要在url中带city参数**
+
+```
+GET http://greeting.wedfairy.com/api/greetings/place/district/?city=993
+```
+```json
+HTTP 200 OK
+[
+  {
+    "id": 994,
+    "name": "越城区",
+    "greetings": 17
+  },
+  {
+    "id": 995,
+    "name": "绍兴县",
+    "greetings": 3
+  },
+]
+```
+
 ## 祝福语音列表
 
 获取祝福语音列表，包括用户的昵称、头像、语音文件地址、创建时间
