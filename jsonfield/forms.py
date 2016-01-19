@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 
 from django import forms
 from django.utils import six
