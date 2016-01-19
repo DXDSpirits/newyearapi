@@ -22,5 +22,18 @@
     </tr>
     {% endfor %}
 </table>
+<nav>
+    <ul class="pager">
+        {% if greeting_list.has_previous %}
+            <li><a href="?page={{ greeting_list.previous_page_number }}">上一页</a></li>
+        {% endif %}
+        <li class="current">
+            <span>{{ greeting_list.number }} / {{ greeting_list.paginator.num_pages }} 页</span>
+        </li>
+        {% if greeting_list.has_next %}
+            <li><a href="?page={{ greeting_list.next_page_number }}">下一页</a></li>
+        {% endif %}
+    </ul>
+</nav>
 </body>
 </html>

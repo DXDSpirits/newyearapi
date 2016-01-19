@@ -1,5 +1,7 @@
 
-from rest_framework import views, viewsets, pagination, response, status, decorators, generics, renderers
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from rest_framework import views, viewsets, pagination, response, status, decorators, renderers
 from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
 
 from .models import Place, Greeting
@@ -61,7 +63,7 @@ class GreetingPagination(pagination.PageNumberPagination):
 
 
 class GreetingViewSet(viewsets.ModelViewSet):
-    queryset = Greeting.objects.filter(status='online')
+    queryset = Greeting.objects.filter(status='online').order_by('-id')
     serializer_class = GreetingSerializer
     filter_class = GreetingFilter
     pagination_class = GreetingPagination
@@ -69,7 +71,16 @@ class GreetingViewSet(viewsets.ModelViewSet):
 
     @decorators.list_route(methods=['get'], renderer_classes=[renderers.TemplateHTMLRenderer])
     def highlight(self, request, *args, **kwargs):
-        greeting_list = self.get_queryset()
+        greetings = self.get_queryset()
+        paginator = Paginator(greetings, 20)
+        page = request.GET.get('page')
+        try:
+            greeting_list = paginator.page(page)
+        except PageNotAnInteger:
+            greeting_list = paginator.page(1)
+        except EmptyPage:
+            greeting_list = paginator.page(paginator.num_pages)
+
         return response.Response({
             'greeting_list': greeting_list
         }, template_name='greetings.html')
