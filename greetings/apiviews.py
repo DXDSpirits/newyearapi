@@ -30,28 +30,6 @@ class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
 
-    def category_list(self, category, parent_id):
-        if category == 'province' or parent_id is not None and parent_id.isdigit():
-            queryset = Place.objects.filter(category=category, parent_id=parent_id)
-            serializer = PlaceGreetingSerializer(queryset, many=True)
-            return response.Response(serializer.data)
-        else:
-            return response.Response(status.HTTP_204_NO_CONTENT)
-
-    @decorators.list_route(methods=['get'])
-    def province(self, request):
-        return self.category_list('province', None)
-
-    @decorators.list_route(methods=['get'])
-    def city(self, request):
-        province = request.query_params.get('province')
-        return self.category_list('city', province)
-
-    @decorators.list_route(methods=['get'])
-    def district(self, request):
-        city = request.query_params.get('city')
-        return self.category_list('district', city)
-
     @decorators.detail_route(methods=['put'])
     def boundary(self, request, pk=None):
         place = self.get_object()
@@ -61,6 +39,58 @@ class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
         place.save(update_fields=['data'])
         serializer = PlaceGreetingSerializer(place)
         return response.Response(serializer.data)
+
+    # def category_list(self, category, parent_id):
+    #     if category == 'province' or parent_id is not None and parent_id.isdigit():
+    #         queryset = Place.objects.filter(category=category, parent_id=parent_id)
+    #         serializer = PlaceGreetingSerializer(queryset, many=True)
+    #         return response.Response(serializer.data)
+    #     else:
+    #         return response.Response(status.HTTP_204_NO_CONTENT)
+
+    # @decorators.list_route(methods=['get'])
+    # def province(self, request):
+    #     return self.category_list('province', None)
+
+    # @decorators.list_route(methods=['get'])
+    # def city(self, request):
+    #     province = request.query_params.get('province')
+    #     return self.category_list('city', province)
+
+    # @decorators.list_route(methods=['get'])
+    # def district(self, request):
+    #     city = request.query_params.get('city')
+    #     return self.category_list('district', city)
+
+
+class ProvinceListView(  # ReadOnlyCacheResponseAndETAGMixin,
+                       viewsets.ReadOnlyModelViewSet):
+    queryset = Place.objects.filter(category='province')
+    serializer_class = PlaceGreetingSerializer
+
+
+class CityListView(  # ReadOnlyCacheResponseAndETAGMixin,
+                   viewsets.ReadOnlyModelViewSet):
+    class PlaceFilter(django_filters.FilterSet):
+        class Meta:
+            model = Place
+            fields = ['province']
+        province = django_filters.NumberFilter(name='parent', required=True)
+    queryset = Place.objects.filter(category='city')
+    serializer_class = PlaceGreetingSerializer
+    filter_class = PlaceFilter
+
+
+class DistrictListView(  # ReadOnlyCacheResponseAndETAGMixin,
+                       viewsets.ReadOnlyModelViewSet):
+    class PlaceFilter(django_filters.FilterSet):
+        class Meta:
+            model = Place
+            fields = ['city']
+        city = django_filters.NumberFilter(name='parent', required=True)
+    queryset = Place.objects.filter(category='district')
+    serializer_class = PlaceGreetingSerializer
+    filter_class = PlaceFilter
 
 
 class GreetingFilter(django_filters.FilterSet):
