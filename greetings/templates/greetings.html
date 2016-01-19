@@ -4,36 +4,46 @@
     <meta charset="utf-8">
     <title>语音列表</title>
     <link rel="stylesheet" href="http://cdn.www.wedfairy.com/assets/stylesheets/bootstrap-custom.css">
+    <style>
+        body {
+            padding: 50px 0;
+        }
+        .table > tbody > tr > td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
-<table class="table table-bordered">
-    {% for greeting in greeting_list %}
-    <tr>
-        <td><img src="{{greeting.profile.avatar}}" height="60"></td>
-        <td>{{greeting.profile.name}}</td>
-        <td>
-        {% for place in greeting.places.all %}
-            <span>{{place.name}}</span>
-        {% endfor %}
-        </td>
-        <td>
-            <audio src="{{greeting.url}}" controls preload="none"></audio>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-<nav>
-    <ul class="pager">
-        {% if greeting_list.has_previous %}
-            <li><a href="?page={{ greeting_list.previous_page_number }}">上一页</a></li>
-        {% endif %}
-        <li class="current">
-            <span>{{ greeting_list.number }} / {{ greeting_list.paginator.num_pages }} 页</span>
-        </li>
-        {% if greeting_list.has_next %}
-            <li><a href="?page={{ greeting_list.next_page_number }}">下一页</a></li>
-        {% endif %}
-    </ul>
-</nav>
+    <div class="container">
+        <table class="table table-bordered">
+            {% for greeting in greetings %}
+            <tr>
+                <td><img src="{{greeting.profile.avatar}}" height="60"></td>
+                <td>{{greeting.profile.name}}</td>
+                <td>
+                {% for place in greeting.places.all %}
+                    <span>{{place.name}}</span>
+                {% endfor %}
+                </td>
+                <td><audio src="{{greeting.url}}" controls preload="none"></audio></td>
+                <!-- <td><button class="btn btn-danger btn-delete">删除</button></td> -->
+            </tr>
+            {% endfor %}
+        </table>
+        <nav>
+            <ul class="pager">
+                {% if greetings.has_previous %}
+                    <li><a href="?page={{ greetings.previous_page_number }}">上一页</a></li>
+                {% endif %}
+                <li class="current">
+                    <span>{{ greetings.number }} / {{ greetings.paginator.num_pages }} 页</span>
+                </li>
+                {% if greetings.has_next %}
+                    <li><a href="?page={{ greetings.next_page_number }}">下一页</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
 </body>
 </html>

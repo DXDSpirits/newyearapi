@@ -71,18 +71,17 @@ class GreetingViewSet(viewsets.ModelViewSet):
 
     @decorators.list_route(methods=['get'], renderer_classes=[renderers.TemplateHTMLRenderer])
     def highlight(self, request, *args, **kwargs):
-        greetings = self.get_queryset()
-        paginator = Paginator(greetings, 20)
+        paginator = Paginator(self.get_queryset(), 20)
         page = request.GET.get('page')
         try:
-            greeting_list = paginator.page(page)
+            greetings = paginator.page(page)
         except PageNotAnInteger:
-            greeting_list = paginator.page(1)
+            greetings = paginator.page(1)
         except EmptyPage:
-            greeting_list = paginator.page(paginator.num_pages)
+            greetings = paginator.page(paginator.num_pages)
 
         return response.Response({
-            'greeting_list': greeting_list
+            'greetings': greetings
         }, template_name='greetings.html')
 
     def perform_create(self, serializer):
