@@ -21,6 +21,7 @@ DB_TYPE_CACHE_KEY = (
     '%(ENGINE)s:%(HOST)s:%(PORT)s:%(NAME)s'
 )
 
+
 class JSONField(six.with_metaclass(models.SubfieldBase, models.Field)):
     """
     A field that will ensure the data entered into it is valid JSON.
@@ -29,7 +30,7 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.Field)):
         'invalid': _("'%s' is not a valid JSON string.")
     }
     description = "JSON object"
-    
+
     def __init__(self, *args, **kwargs):
         if not kwargs.get('null', False):
             kwargs['default'] = kwargs.get('default', dict)
@@ -38,7 +39,7 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.Field)):
         }
         super(JSONField, self).__init__(*args, **kwargs)
         self.validate(self.get_default(), None)
-        
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': JSONFormField,
@@ -46,13 +47,13 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.Field)):
         }
         defaults.update(**kwargs)
         return super(JSONField, self).formfield(**defaults)
-    
+
     def validate(self, value, model_instance):
         if not self.null and value is None:
             raise ValidationError(self.error_messages['null'])
         try:
             self.get_prep_value(value)
-        except:
+        except ValueError:
             raise ValidationError(self.error_messages['invalid'] % value)
 
     def get_default(self):
@@ -67,26 +68,17 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.Field)):
 
     def get_internal_type(self):
         return 'TextField'
-    
+
     def db_type(self, connection):
-        cache_key = DB_TYPE_CACHE_KEY % connection.settings_dict
-        db_type = cache.get(cache_key)
-        
-        if not db_type:
-            # Test to see if we support JSON querying.
-            cursor = connection.cursor()
-            try:
-                sid = transaction.savepoint(using=connection.alias)
-                cursor.execute('SELECT \'{}\'::json = \'{}\'::json;')
-            except DatabaseError:
-                transaction.savepoint_rollback(sid, using=connection.alias)
-                db_type = 'text'
-            else:
-                db_type = 'json'
-            cache.set(cache_key, db_type)
-        
-        return db_type
-    
+        if connection.vendor == 'postgresql':
+            # Only do jsonb if in pg 9.4+
+            if connection.pg_version >= 90400:
+                return 'jsonb'
+            return 'text'
+        if connection.vendor == 'mysql':
+            return 'longtext'
+        return 'text'
+
     def to_python(self, value):
         if isinstance(value, six.string_types):
             if value == "":
@@ -104,14 +96,14 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.Field)):
 
     def get_db_prep_value(self, value, connection=None, prepared=None):
         return self.get_prep_value(value)
-    
+
     def get_prep_value(self, value):
         if value is None:
             if not self.null and self.blank:
                 return ""
             return None
         return json.dumps(value, default=default, **self.encoder_kwargs)
-    
+
     def get_prep_lookup(self, lookup_type, value):
         if lookup_type in ["exact", "iexact"]:
             return self.to_python(self.get_prep_value(value))
@@ -134,43 +126,44 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.Field)):
     def value_to_string(self, obj):
         return self._get_val_from_obj(obj)
 
+
 class TypedJSONField(JSONField):
     """
-    
+
     """
     def __init__(self, *args, **kwargs):
         self.json_required_fields = kwargs.pop('required_fields', {})
         self.json_validators = kwargs.pop('validators', [])
-        
+
         super(TypedJSONField, self).__init__(*args, **kwargs)
-    
+
     def cast_required_fields(self, obj):
         if not obj:
             return
         for field_name, field_type in self.json_required_fields.items():
             obj[field_name] = field_type.to_python(obj[field_name])
-        
+
     def to_python(self, value):
         value = super(TypedJSONField, self).to_python(value)
-        
+
         if isinstance(value, list):
             for item in value:
                 self.cast_required_fields(item)
         else:
             self.cast_required_fields(value)
-        
+
         return value
-    
+
     def validate(self, value, model_instance):
         super(TypedJSONField, self).validate(value, model_instance)
-        
+
         for v in self.json_validators:
             if isinstance(value, list):
                 for item in value:
                     v(item)
             else:
                 v(value)
-    
+
 try:
     from south.modelsinspector import add_introspection_rules
     add_introspection_rules([], ['^jsonfield\.fields\.JSONField'])
