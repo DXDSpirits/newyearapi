@@ -1,5 +1,5 @@
 
-from rest_framework import views, viewsets, pagination, response, status, decorators
+from rest_framework import views, viewsets, pagination, response, status, decorators, generics, renderers
 from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
 
 from .models import Place, Greeting
@@ -47,10 +47,11 @@ class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
 
 class GreetingFilter(django_filters.FilterSet):
     place = django_filters.CharFilter(name='places__id')
+    owner = django_filters.NumberFilter(name='owner_id')
 
     class Meta:
         model = Greeting
-        fields = ['place']
+        fields = ['place', 'owner']
         order_by = ['-id']
 
 
@@ -65,6 +66,13 @@ class GreetingViewSet(viewsets.ModelViewSet):
     filter_class = GreetingFilter
     pagination_class = GreetingPagination
     permission_classes = [IsOwnerOrReadOnly]
+
+    @decorators.list_route(methods=['get'], renderer_classes=[renderers.TemplateHTMLRenderer])
+    def highlight(self, request, *args, **kwargs):
+        greeting_list = self.get_queryset()
+        return response.Response({
+            'greeting_list': greeting_list
+        }, template_name='greetings.html')
 
     def perform_create(self, serializer):
         serializer.save(owner_id=self.request.user.id, status='raw')

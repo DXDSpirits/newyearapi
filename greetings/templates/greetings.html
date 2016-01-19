@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>语音列表</title>
+    <link rel="stylesheet" href="http://cdn.www.wedfairy.com/assets/stylesheets/bootstrap-custom.css">
+</head>
+<body>
+<table class="table table-bordered">
+    {% for greeting in greeting_list %}
+    <tr>
+        <td><img src="{{greeting.profile.avatar}}" height="60"></td>
+        <td>{{greeting.profile.name}}</td>
+        <td>
+        {% for place in greeting.places.all %}
+            <span>{{place.name}}</span>
+        {% endfor %}
+        </td>
+        <td>
+            <audio src="{{greeting.url}}" controls preload="none"></audio>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
