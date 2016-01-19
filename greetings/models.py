@@ -17,6 +17,8 @@ class Place(models.Model):
 
     name = models.CharField(max_length=50, blank=True, null=True)
 
+    data = jsonfield.JSONField(blank=True, null=True)
+
     def __unicode__(self):
         return u'%s (%s)' % (unicode(self.name), self.category)
 
