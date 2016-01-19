@@ -6,6 +6,7 @@ from .models import Place, Greeting
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'category', 'parent']
+    search_fields = ['name', 'parent__name']
 
 
 @admin.register(Greeting)
