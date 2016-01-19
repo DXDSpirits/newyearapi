@@ -53,7 +53,7 @@ class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
             place.data = {}
         place.data['boundary'] = request.data.get('boundary', [])
         place.save(update_fields=['data'])
-        serializer = self.get_serializer(place)
+        serializer = PlaceGreetingSerializer(place)
         return response.Response(serializer.data)
 
 
