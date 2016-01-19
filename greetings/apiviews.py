@@ -46,6 +46,16 @@ class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
         else:
             return response.Response(status.HTTP_204_NO_CONTENT)
 
+    @decorators.detail_route(methods=['put'])
+    def boundary(self, request, pk=None):
+        place = self.get_object()
+        if place.data is None:
+            place.data = {}
+        place.data['boundary'] = request.data.get('boundary', [])
+        place.save(update_fields=['data'])
+        serializer = self.get_serializer(place)
+        return response.Response(serializer.data)
+
 
 class GreetingFilter(django_filters.FilterSet):
     place = django_filters.CharFilter(name='places__id')

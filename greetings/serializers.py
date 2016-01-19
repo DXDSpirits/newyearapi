@@ -13,14 +13,19 @@ class PlaceSerializer(serializers.ModelSerializer):
 
 class PlaceGreetingSerializer(serializers.ModelSerializer):
     greetings = serializers.SerializerMethodField()
+    boundary = serializers.SerializerMethodField()
 
     def get_greetings(self, obj):
         greetings = obj.greetings.filter(status='online')
         return greetings.count()
 
+    def get_boundary(self, obj):
+        boundary = (obj.data or {}).get('boundary', [])
+        return boundary
+
     class Meta:
         model = Place
-        fields = ['id', 'name', 'greetings']
+        fields = ['id', 'name', 'greetings', 'boundary']
 
 
 class GreetingSerializer(serializers.ModelSerializer):
