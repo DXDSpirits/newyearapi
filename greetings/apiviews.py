@@ -46,6 +46,16 @@ class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
         else:
             return response.Response(status.HTTP_204_NO_CONTENT)
 
+    @decorators.list_route(methods=['get'])
+    def district(self, request):
+        city = request.query_params.get('city')
+        if city is not None and city.isdigit():
+            queryset = Place.objects.filter(category='district', parent_id=city)
+            serializer = PlaceGreetingSerializer(queryset, many=True)
+            return response.Response(serializer.data)
+        else:
+            return response.Response(status.HTTP_204_NO_CONTENT)
+
     @decorators.detail_route(methods=['put'])
     def boundary(self, request, pk=None):
         place = self.get_object()
