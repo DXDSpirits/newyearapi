@@ -15,5 +15,19 @@ class GreetingAdmin(admin.ModelAdmin):
         return ', '.join([p.name for p in instance.places.all()])
     placelist.short_description = "Places"
 
-    list_display = ['id', 'owner_id', 'time_created', 'status', 'key', 'url', 'placelist']
+    def suit_row_attributes(self, obj, request):
+        if obj.status == 'online':
+            return {'class': 'success'}
+        elif obj.status == 'raw':
+            return {'class': 'error'}
+        else:
+            return {}
+
+    def suit_cell_attributes(self, obj, column):
+        style = 'word-break:break-all;'
+        if True or column == 'url':
+            style += 'max-width:160px;'
+        return {'style': style}
+
+    list_display = ['id', 'owner_id', 'time_created', 'status', 'key', 'url', 'description', 'placelist']
     filter_horizontal = ['places']

@@ -47,5 +47,6 @@ class GreetingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Greeting
-        fields = ['id', 'owner_id', 'time_created', 'url', 'status', 'profile', 'places', 'key', 'place_id']
+        fields = ['id', 'owner_id', 'time_created', 'url', 'status', 'title', 'description',
+                  'profile', 'places', 'place_id', 'key']
         read_only_fields = ['owner_id', 'status']

@@ -40,28 +40,6 @@ class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
         serializer = PlaceGreetingSerializer(place)
         return response.Response(serializer.data)
 
-    # def category_list(self, category, parent_id):
-    #     if category == 'province' or parent_id is not None and parent_id.isdigit():
-    #         queryset = Place.objects.filter(category=category, parent_id=parent_id)
-    #         serializer = PlaceGreetingSerializer(queryset, many=True)
-    #         return response.Response(serializer.data)
-    #     else:
-    #         return response.Response(status.HTTP_204_NO_CONTENT)
-
-    # @decorators.list_route(methods=['get'])
-    # def province(self, request):
-    #     return self.category_list('province', None)
-
-    # @decorators.list_route(methods=['get'])
-    # def city(self, request):
-    #     province = request.query_params.get('province')
-    #     return self.category_list('city', province)
-
-    # @decorators.list_route(methods=['get'])
-    # def district(self, request):
-    #     city = request.query_params.get('city')
-    #     return self.category_list('district', city)
-
 
 class ProvinceListView(  # ReadOnlyCacheResponseAndETAGMixin,
                        viewsets.ReadOnlyModelViewSet):
@@ -125,7 +103,6 @@ class GreetingViewSet(viewsets.ModelViewSet):
             greetings = paginator.page(1)
         except EmptyPage:
             greetings = paginator.page(paginator.num_pages)
-
         return response.Response({
             'greetings': greetings
         }, template_name='greetings.html')
