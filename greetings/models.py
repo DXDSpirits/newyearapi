@@ -56,3 +56,19 @@ def greeting_postsave(sender, instance, created, raw, **kwargs):
                         .exclude(status='archived') \
                         .update(status='archived')
 post_save.connect(greeting_postsave, sender=Greeting)
+
+
+class Like(models.Model):
+    user_id = models.IntegerField(blank=True, null=True, db_index=True)
+
+    greeting = models.ForeignKey(Greeting, blank=True, null=True)
+
+    time_created = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def profile(self):
+        return UserProfile.objects.filter(user_id=self.user_id).first()
+
+    class Meta:
+        app_label = 'sites'
+        unique_together = [['greeting', 'user_id', ], ]
