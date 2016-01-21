@@ -245,6 +245,14 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'api@wedfairy.com'
 EMAIL_HOST_PASSWORD = '********'
 
+# Qiniu
+
+QINIU = {
+    'ACCESS_KEY': '',
+    'SECRET_KEY': '',
+    'BUCKET_NAME': ''
+}
+
 # Local settings
 
 try:
