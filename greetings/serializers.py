@@ -33,20 +33,23 @@ class GreetingSerializer(serializers.ModelSerializer):
     places = PlaceSerializer(many=True, read_only=True)
     place_id = serializers.IntegerField(write_only=True)
     key = serializers.CharField(write_only=True)
+    persistent_id = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
         place_id = validated_data.pop('place_id')
+        persistent_id = validated_data.pop('persistent_id')
+        validated_data['data'] = {'persistent_id': persistent_id}
+        greeting = super(GreetingSerializer, self).create(validated_data)
         place = Place.objects.filter(id=place_id).first()
         places = []
         while place is not None:
             places.append(place)
             place = place.parent
-        greeting = super(GreetingSerializer, self).create(validated_data)
         greeting.places.add(*places)
         return greeting
 
     class Meta:
         model = Greeting
         fields = ['id', 'owner_id', 'time_created', 'url', 'status', 'title', 'description',
-                  'profile', 'places', 'place_id', 'key']
+                  'profile', 'places', 'place_id', 'key', 'persistent_id']
         read_only_fields = ['owner_id', 'status']
