@@ -1,8 +1,10 @@
-
+from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from rest_framework import views, viewsets, pagination, response, status, decorators, renderers
 from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
+
+from qiniu import Auth, PersistentFop, op_save
 
 from .models import Place, Greeting
 from .serializers import PlaceSerializer, PlaceGreetingSerializer, GreetingSerializer
@@ -107,5 +109,16 @@ class GreetingViewSet(viewsets.ModelViewSet):
             'greetings': greetings
         }, template_name='greetings.html')
 
+    def perform_pfop(self, key):
+        access_key = settings.QINIU['ACCESS_KEY']
+        secret_key = settings.QINIU['SECRET_KEY']
+        notify_url = 'http://greeting.wedfairy.com/api/greetings/pfop-notify/'
+
+        auth = Auth(access_key, secret_key)
+        pfop = PersistentFop(auth, 'tatmusic', 'wechataudio', notify_url)
+        op = op_save('avthumb/mp3', 'tatmusic', key + '.mp3')
+        ret, info = pfop.execute(key, [op])
+
     def perform_create(self, serializer):
         serializer.save(owner_id=self.request.user.id, status='raw')
+        self.perform_pfop(serializer.instance.key)
