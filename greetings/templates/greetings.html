@@ -27,6 +27,7 @@
                 {% endfor %}
                 </td>
                 <td><audio src="{{greeting.url}}" controls preload="none"></audio></td>
+                <td>{{greeting.description|default_if_none:""}}</td>
                 <!-- <td><button class="btn btn-danger btn-delete">删除</button></td> -->
             </tr>
             {% endfor %}
