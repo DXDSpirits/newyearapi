@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
+from django.utils.six.moves.urllib import parse as urlparse
 
 from rest_framework import views, viewsets, pagination, response, status, decorators, renderers
 from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
@@ -109,16 +111,23 @@ class GreetingViewSet(viewsets.ModelViewSet):
             'greetings': greetings
         }, template_name='greetings.html')
 
-    def perform_pfop(self, key):
+    def perform_pfop(self, instance):
         access_key = settings.QINIU['ACCESS_KEY']
         secret_key = settings.QINIU['SECRET_KEY']
-        notify_url = 'http://greeting.wedfairy.com/api/greetings/pfop-notify/'
+        origin = self.request.build_absolute_uri('/')
+        path = reverse('greetings-pfop-notify')
+        notify_url = urlparse.urljoin(origin, path)
 
         auth = Auth(access_key, secret_key)
         pfop = PersistentFop(auth, 'tatmusic', 'wechataudio', notify_url)
-        op = op_save('avthumb/mp3', 'tatmusic', key + '.mp3')
-        ret, info = pfop.execute(key, [op])
+        op = op_save('avthumb/mp3', 'tatmusic', instance.key + '.mp3')
+        ret, info = pfop.execute(instance.key, [op])
+        if instance.data is None:
+            instance.data = ret
+        else:
+            instance.data.update(ret)
+        instance.save(update_fields=['data'])
 
     def perform_create(self, serializer):
         serializer.save(owner_id=self.request.user.id, status='raw')
-        self.perform_pfop(serializer.instance.key)
+        self.perform_pfop(serializer.instance)

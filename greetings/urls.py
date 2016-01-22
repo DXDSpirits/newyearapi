@@ -13,5 +13,5 @@ router.register(r'greeting', GreetingViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^pfop-notify/$', PfopNotifyView.as_view()),
+    url(r'^pfop-notify/$', PfopNotifyView.as_view(), name='greetings-pfop-notify'),
 ]
