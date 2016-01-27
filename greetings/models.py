@@ -70,5 +70,4 @@ class Like(models.Model):
         return UserProfile.objects.filter(user_id=self.user_id).first()
 
     class Meta:
-        app_label = 'sites'
         unique_together = [['greeting', 'user_id', ], ]

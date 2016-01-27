@@ -86,7 +86,7 @@ class GreetingFilter(django_filters.FilterSet):
 
 
 class GreetingPagination(pagination.PageNumberPagination):
-    page_size = 10
+    page_size = 9
     page_size_query_param = 'limit'
 
 
