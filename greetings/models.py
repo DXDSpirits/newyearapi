@@ -60,10 +60,9 @@ post_save.connect(greeting_postsave, sender=Greeting)
 
 class Like(models.Model):
     user_id = models.IntegerField(blank=True, null=True, db_index=True)
+    time_created = models.DateTimeField(auto_now_add=True)
 
     greeting = models.ForeignKey(Greeting, blank=True, null=True)
-
-    time_created = models.DateTimeField(auto_now_add=True)
 
     @property
     def profile(self):
@@ -75,7 +74,7 @@ class Like(models.Model):
 
 class Inspiration(models.Model):
     text = models.TextField(blank=True, null=True)
-    order = models.IntegerField(blank=True, default=0)
+    places = models.ManyToManyField(Place, blank=True, related_name="inspirations")
 
     def __unicode__(self):
         return unicode(self.text)
