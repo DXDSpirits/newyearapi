@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from django.utils.six.moves.urllib import parse as urlparse
 
 from rest_framework import views, viewsets, pagination, response, status, decorators, \
@@ -184,7 +185,7 @@ class LikeViewSet(mixins.ListModelMixin,
 class InspirationViewSet(ReadOnlyCacheResponseAndETAGMixin,
                          viewsets.ReadOnlyModelViewSet):
     class Pagination(pagination.PageNumberPagination):
-        page_size = 10
+        page_size = 3
 
     class Filter(django_filters.FilterSet):
         place = django_filters.CharFilter(name='places__id')
@@ -193,7 +194,7 @@ class InspirationViewSet(ReadOnlyCacheResponseAndETAGMixin,
             model = Inspiration
             fields = ['place']
 
-    queryset = Inspiration.objects.all()
+    queryset = Inspiration.objects.annotate(num_places=Count('places')).order_by('num_places')
     serializer_class = InspirationSerializer
     filter_class = Filter
     pagination_class = Pagination
