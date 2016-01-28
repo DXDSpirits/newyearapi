@@ -3,13 +3,15 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.utils.six.moves.urllib import parse as urlparse
 
-from rest_framework import views, viewsets, pagination, response, status, decorators, renderers
+from rest_framework import views, viewsets, pagination, response, status, decorators, \
+    renderers, mixins, throttling, permissions
 from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
 
 from qiniu import Auth, PersistentFop, op_save
 
-from .models import Place, Greeting
-from .serializers import PlaceSerializer, PlaceGreetingSerializer, GreetingSerializer
+from .models import Place, Greeting, Like, Inspiration
+from .serializers import PlaceSerializer, PlaceGreetingSerializer, GreetingSerializer, \
+    LikeSerializer, InspirationSerializer
 from .permissions import IsOwnerOrReadOnly
 
 import django_filters
@@ -146,3 +148,52 @@ class UserGreetingView(views.APIView):
         greeting = Greeting.objects.filter(owner_id=pk, status='online').first()
         serializer = GreetingSerializer(greeting)
         return response.Response(serializer.data)
+
+
+class LikeViewSet(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  mixins.DestroyModelMixin,
+                  viewsets.GenericViewSet):
+
+    class LikeThrottling(throttling.UserRateThrottle):
+        rate = '10/min'
+
+    queryset = Like.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    throttle_classes = (LikeThrottling,)
+    serializer_class = LikeSerializer
+
+    def list(self, request, *args, **kwargs):
+        user = self.request.user
+        greeting = request.query_params.get('greeting')
+        if greeting is not None and greeting.isdigit():
+            queryset = Like.objects.filter(greeting_id=greeting).order_by('-id')
+        elif user.is_authenticated():
+            user = self.request.user
+            queryset = user.like_set.all().order_by('-id')
+        else:
+            queryset = Like.objects.none()
+        serializer = self.get_serializer(queryset, many=True)
+        return response.Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        request.data['owner_id'] = self.request.user.id
+        return super(LikeViewSet, self).create(request, *args, **kwargs)
+
+
+class InspirationViewSet(ReadOnlyCacheResponseAndETAGMixin,
+                         viewsets.ReadOnlyModelViewSet):
+    class Pagination(pagination.PageNumberPagination):
+        page_size = 10
+
+    class Filter(django_filters.FilterSet):
+        place = django_filters.CharFilter(name='places__id')
+
+        class Meta:
+            model = Inspiration
+            fields = ['place']
+
+    queryset = Inspiration.objects.all()
+    serializer_class = InspirationSerializer
+    filter_class = Filter
+    pagination_class = Pagination
