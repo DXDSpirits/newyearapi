@@ -154,3 +154,49 @@ HTTP 200 OK
 ```
 
 places 参数包含该语音祝福所对应的所有**省/市/区**信息
+
+## 用户语音
+
+获取一个用户的语音，包含语音信息，个人信息，位置信息
+
+```
+GET http://greeting.wedfairy.com/api/greetings/usergreeting/15670/
+```
+```json
+HTTP 200 OK
+{
+  "id": 129,
+  "owner_id": 15670,
+  "time_created": "2016-01-23T12:59:50",
+  "url": "http://mm.8yinhe.cn/wechat/hwKfTVVCqLhRtiTF1cxF1MFbbEAQsC7jOXs8fA_rPvvcOZTATlCakMgBtlZBJk8l.mp3",
+  "status": "online",
+  "title": null,
+  "description": "有爱有俩个都说觉得好多可以。亚太风机就乖好声音说，每次和她做榜样。金茂大厦姥姥过特别多的伤害都是三十多等一等。跳跃太自大干吃不开户时间搞微信搞的这么好。",
+  "profile": {
+    "id": 15628,
+    "name": "今年本命年",
+    "avatar": "http://wx.qlogo.cn/mmopen/LB0icf6Q5rSSvy4EIS0jITQJo4tkELg2VCCVWJtBLvtkyqWomia7AgfzyVAyU3CbJFibQkNicDJWm0ibtYbEpGuaNXYib3ypEVS4Sp/0",
+    "data": null
+  },
+  "places": [
+    {
+      "id": 800,
+      "category": "province",
+      "parent": null,
+      "name": "上海"
+    },
+    {
+      "id": 801,
+      "category": "city",
+      "parent": 800,
+      "name": "上海"
+    },
+    {
+      "id": 814,
+      "category": "district",
+      "parent": 801,
+      "name": "浦东新区"
+    }
+  ]
+}
+```
