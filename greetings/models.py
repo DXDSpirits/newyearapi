@@ -74,7 +74,8 @@ class Like(models.Model):
 
 class Inspiration(models.Model):
     text = models.TextField(blank=True, null=True)
-    places = models.ManyToManyField(Place, blank=True, related_name="inspirations")
+    places = models.ManyToManyField(Place, blank=True, related_name="inspirations",
+                                    limit_choices_to={'category': 'province'})
 
     def __unicode__(self):
         return unicode(self.text)

@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import Place, Greeting
+from .models import Place, Greeting, Inspiration
 
 
 @admin.register(Place)
@@ -13,7 +13,7 @@ class PlaceAdmin(admin.ModelAdmin):
 class GreetingAdmin(admin.ModelAdmin):
     def placelist(self, instance):
         return ', '.join([p.name for p in instance.places.all()])
-    placelist.short_description = "Places"
+    placelist.short_description = 'Places'
 
     def suit_row_attributes(self, obj, request):
         if obj.status == 'online':
@@ -30,4 +30,14 @@ class GreetingAdmin(admin.ModelAdmin):
         return {'style': style}
 
     list_display = ['id', 'owner_id', 'time_created', 'status', 'key', 'url', 'description', 'placelist']
+    filter_horizontal = ['places']
+
+
+@admin.register(Inspiration)
+class InspirationAdmin(admin.ModelAdmin):
+    def placelist(self, instance):
+        return ', '.join([p.name for p in instance.places.all()])
+    placelist.short_description = 'Places'
+
+    list_display = ['id', 'text', 'placelist']
     filter_horizontal = ['places']
