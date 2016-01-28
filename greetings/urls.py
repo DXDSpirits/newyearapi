@@ -1,7 +1,7 @@
 
 from django.conf.urls import url, include
 from rest_framework import routers
-from .apiviews import PlaceViewSet, GreetingViewSet, PfopNotifyView, \
+from .apiviews import PlaceViewSet, GreetingViewSet, PfopNotifyView, UserGreetingView, \
     ProvinceListView, CityListView, DistrictListView
 
 router = routers.DefaultRouter()
@@ -14,4 +14,5 @@ router.register(r'greeting', GreetingViewSet)
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^pfop-notify/$', PfopNotifyView.as_view(), name='greetings-pfop-notify'),
+    url(r'^usergreeting/(?P<pk>\d+)/$', UserGreetingView.as_view(), name='greeting-from-user'),
 ]

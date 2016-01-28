@@ -139,3 +139,10 @@ class GreetingViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner_id=self.request.user.id, status='raw')
         self.perform_pfop(serializer.instance)
+
+
+class UserGreetingView(views.APIView):
+    def get(self, request, pk=None):
+        greeting = Greeting.objects.filter(owner_id=pk, status='online').first()
+        serializer = GreetingSerializer(greeting)
+        return response.Response(serializer.data)
