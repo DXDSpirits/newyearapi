@@ -59,17 +59,17 @@ post_save.connect(greeting_postsave, sender=Greeting)
 
 
 class Like(models.Model):
-    user_id = models.IntegerField(blank=True, null=True, db_index=True)
+    owner_id = models.IntegerField(blank=True, null=True, db_index=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
     greeting = models.ForeignKey(Greeting, blank=True, null=True)
 
     @property
     def profile(self):
-        return UserProfile.objects.filter(user_id=self.user_id).first()
+        return UserProfile.objects.filter(user_id=self.owner_id).first()
 
     class Meta:
-        unique_together = [['greeting', 'user_id', ], ]
+        unique_together = [['greeting', 'owner_id', ], ]
 
 
 class Inspiration(models.Model):

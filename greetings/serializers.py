@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 from users.serializers import UserProfileSerializer
-from .models import Place, Greeting
+from .models import Place, Greeting, Inspiration, Like
 
 
 class PlaceSerializer(serializers.ModelSerializer):
@@ -51,3 +51,15 @@ class GreetingSerializer(serializers.ModelSerializer):
         fields = ['id', 'owner_id', 'time_created', 'url', 'status', 'title', 'description',
                   'profile', 'places', 'place_id', 'key']
         read_only_fields = ['owner_id', 'status']
+
+
+class InspirationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inspiration
+        fields = ('id', 'text')
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ('id', 'owner_id', 'greeting', 'time_created')
