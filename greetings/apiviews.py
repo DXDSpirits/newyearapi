@@ -50,6 +50,14 @@ class ProvinceListView(  # ReadOnlyCacheResponseAndETAGMixin,
     queryset = Place.objects.filter(category='province')
     serializer_class = PlaceGreetingSerializer
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        data = serializer.data
+        if isinstance(serializer.data, list):
+            data = sorted(data, key=lambda item: -item.get('greetings', 0))
+        return response.Response(data)
+
 
 class CityListView(  # ReadOnlyCacheResponseAndETAGMixin,
                    viewsets.ReadOnlyModelViewSet):

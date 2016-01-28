@@ -20,8 +20,9 @@ class PlaceGreetingSerializer(serializers.ModelSerializer):
         return greetings.count()
 
     def get_boundary(self, obj):
-        boundary = (obj.data or {}).get('boundary', [])
-        return boundary
+        return []
+        # boundary = (obj.data or {}).get('boundary', [])
+        # return boundary
 
     class Meta:
         model = Place

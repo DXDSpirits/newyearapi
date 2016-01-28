@@ -71,3 +71,11 @@ class Like(models.Model):
 
     class Meta:
         unique_together = [['greeting', 'user_id', ], ]
+
+
+class Inspiration(models.Model):
+    text = models.TextField(blank=True, null=True)
+    order = models.IntegerField(blank=True, default=0)
+
+    def __unicode__(self):
+        return unicode(self.text)
