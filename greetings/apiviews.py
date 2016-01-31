@@ -48,7 +48,7 @@ class PlaceViewSet(ReadOnlyCacheResponseAndETAGMixin,
         return response.Response(serializer.data)
 
 
-class ProvinceListView(  # ReadOnlyCacheResponseAndETAGMixin,
+class ProvinceListView(ReadOnlyCacheResponseAndETAGMixin,
                        viewsets.ReadOnlyModelViewSet):
     queryset = Place.objects.filter(category='province')
     serializer_class = PlaceGreetingSerializer
@@ -62,7 +62,7 @@ class ProvinceListView(  # ReadOnlyCacheResponseAndETAGMixin,
         return response.Response(data)
 
 
-class CityListView(  # ReadOnlyCacheResponseAndETAGMixin,
+class CityListView(ReadOnlyCacheResponseAndETAGMixin,
                    viewsets.ReadOnlyModelViewSet):
     class PlaceFilter(django_filters.FilterSet):
         class Meta:
@@ -74,7 +74,7 @@ class CityListView(  # ReadOnlyCacheResponseAndETAGMixin,
     filter_class = PlaceFilter
 
 
-class DistrictListView(  # ReadOnlyCacheResponseAndETAGMixin,
+class DistrictListView(ReadOnlyCacheResponseAndETAGMixin,
                        viewsets.ReadOnlyModelViewSet):
     class PlaceFilter(django_filters.FilterSet):
         class Meta:
@@ -87,7 +87,7 @@ class DistrictListView(  # ReadOnlyCacheResponseAndETAGMixin,
 
 
 class GreetingFilter(django_filters.FilterSet):
-    place = django_filters.CharFilter(name='places__id')
+    place = django_filters.NumberFilter(name='places__id')
     owner = django_filters.NumberFilter(name='owner_id')
 
     class Meta:
@@ -188,7 +188,7 @@ class InspirationViewSet(ReadOnlyCacheResponseAndETAGMixin,
         page_size = 3
 
     class Filter(django_filters.FilterSet):
-        place = django_filters.CharFilter(name='places__id')
+        place = django_filters.NumberFilter(name='places__id')
 
         class Meta:
             model = Inspiration
