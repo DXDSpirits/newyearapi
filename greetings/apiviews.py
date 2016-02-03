@@ -131,7 +131,7 @@ class GreetingViewSet(viewsets.ModelViewSet):
 
         auth = Auth(access_key, secret_key)
         pfop = PersistentFop(auth, 'tatmusic', 'wechataudio', notify_url)
-        op = op_save('avthumb/mp3', 'tatmusic', instance.key + '.mp3')
+        op = op_save('avthumb/mp3/aq/0', 'tatmusic', instance.key + '.mp3')
         ret, info = pfop.execute(instance.key, [op])
         if instance.data is None:
             instance.data = ret
