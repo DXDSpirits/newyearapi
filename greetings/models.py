@@ -94,7 +94,7 @@ class Relay(models.Model):
 
 
 def relay_postsave(sender, instance, created, raw, **kwargs):
-    if created:
+    if created and instance.parent_id is not None:
         profile = UserProfile.objects.filter(user_id=instance.owner_id).first()
         greeting = Greeting.objects.filter(status='online', owner_id=instance.owner_id).first()
         if greeting is not None and profile is not None:
@@ -109,4 +109,5 @@ def relay_postsave(sender, instance, created, raw, **kwargs):
                     'province_id': province.id,
                     'province_name': province.name}
             requests.post(url, json=data, params=params)
+        Relay.objects.get_or_create(owner_id=instance.parent_id)
 post_save.connect(relay_postsave, sender=Relay)
