@@ -6,6 +6,7 @@ from django.utils.six.moves.urllib import parse as urlparse
 
 from rest_framework import views, viewsets, pagination, response, status, decorators, \
     renderers, mixins, throttling, permissions
+from rest_framework.generics import get_object_or_404
 from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
 
 from qiniu import Auth, PersistentFop, op_save
@@ -146,7 +147,7 @@ class GreetingViewSet(viewsets.ModelViewSet):
 
 class UserGreetingView(views.APIView):
     def get(self, request, pk=None):
-        greeting = Greeting.objects.filter(owner_id=pk, status='online').first()
+        greeting = get_object_or_404(Greeting.objects, owner_id=pk, status='online')
         serializer = GreetingSerializer(greeting)
         return response.Response(serializer.data)
 
