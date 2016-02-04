@@ -72,6 +72,11 @@ class Like(models.Model):
         unique_together = [['greeting', 'owner_id', ], ]
 
 
+class Share(models.Model):
+    owner_id = models.IntegerField(blank=True, null=True, db_index=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+
+
 class Inspiration(models.Model):
     text = models.TextField(blank=True, null=True)
     places = models.ManyToManyField(Place, blank=True, related_name="inspirations",

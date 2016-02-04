@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 from users.serializers import UserProfileSerializer
-from .models import Place, Greeting, Inspiration, Like
+from .models import Place, Greeting, Inspiration, Like, Share
 
 
 class PlaceSerializer(serializers.ModelSerializer):
@@ -63,3 +63,9 @@ class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = ('id', 'owner_id', 'greeting', 'time_created')
+
+
+class ShareSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Share
+        fields = ['id', 'owner_id', 'time_created']

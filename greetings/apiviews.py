@@ -12,9 +12,9 @@ from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin, 
 
 from qiniu import Auth, PersistentFop, op_save
 
-from .models import Place, Greeting, Like, Inspiration
+from .models import Place, Greeting, Like, Inspiration, Share
 from .serializers import PlaceSerializer, PlaceGreetingSerializer, GreetingSerializer, \
-    LikeSerializer, InspirationSerializer
+    LikeSerializer, InspirationSerializer, ShareSerializer
 from .permissions import IsOwnerOrReadOnly
 
 import django_filters
@@ -206,3 +206,18 @@ class InspirationViewSet(ReadOnlyCacheResponseAndETAGMixin,
     serializer_class = InspirationSerializer
     filter_class = Filter
     pagination_class = Pagination
+
+
+class ShareViewSet(mixins.CreateModelMixin,
+                   mixins.ListModelMixin,
+                   viewsets.GenericViewSet):
+    class Pagination(pagination.PageNumberPagination):
+        page_size = 1
+
+    queryset = Share.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = ShareSerializer
+    pagination_class = Share
+
+    def perform_create(self, serializer):
+        serializer.save(owner_id=self.request.user.id)
