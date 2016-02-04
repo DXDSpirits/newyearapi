@@ -214,7 +214,7 @@ class ShareViewSet(mixins.CreateModelMixin,
     class Pagination(pagination.PageNumberPagination):
         page_size = 1
 
-    queryset = Share.objects.all()
+    queryset = Share.objects.order_by('-id')
     serializer_class = ShareSerializer
     pagination_class = Pagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
