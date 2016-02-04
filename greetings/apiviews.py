@@ -215,9 +215,9 @@ class ShareViewSet(mixins.CreateModelMixin,
         page_size = 1
 
     queryset = Share.objects.all()
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = ShareSerializer
-    pagination_class = Share
+    pagination_class = Pagination
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save(owner_id=self.request.user.id)

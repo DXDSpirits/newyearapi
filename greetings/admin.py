@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import Place, Greeting, Inspiration
+from .models import Place, Greeting, Inspiration, Share
 
 
 @admin.register(Place)
@@ -41,3 +41,8 @@ class InspirationAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'text', 'placelist']
     filter_horizontal = ['places']
+
+
+@admin.register(Share)
+class ShareAdmin(admin.ModelAdmin):
+    list_display = ['id', 'owner_id', 'time_created']
