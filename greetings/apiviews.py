@@ -14,7 +14,7 @@ from qiniu import Auth, PersistentFop, op_save
 
 from .models import Place, Greeting, Like, Inspiration, Share
 from .serializers import PlaceSerializer, PlaceGreetingSerializer, GreetingSerializer, \
-    LikeSerializer, InspirationSerializer, ShareSerializer
+    LikeSerializer, InspirationSerializer, ShareSerializer, RelaySerializer
 from .permissions import IsOwnerOrReadOnly
 
 import django_filters
@@ -217,6 +217,16 @@ class ShareViewSet(mixins.CreateModelMixin,
     queryset = Share.objects.order_by('-id')
     serializer_class = ShareSerializer
     pagination_class = Pagination
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def perform_create(self, serializer):
+        serializer.save(owner_id=self.request.user.id)
+
+
+class RelayViewSet(mixins.CreateModelMixin,
+                   viewsets.GenericViewSet):
+    queryset = Share.objects.all()
+    serializer_class = RelaySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):

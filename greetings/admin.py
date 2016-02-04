@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import Place, Greeting, Inspiration, Share
+from .models import Place, Greeting, Inspiration, Share, Relay
 
 
 @admin.register(Place)
@@ -46,3 +46,8 @@ class InspirationAdmin(admin.ModelAdmin):
 @admin.register(Share)
 class ShareAdmin(admin.ModelAdmin):
     list_display = ['id', 'owner_id', 'time_created']
+
+
+@admin.register(Relay)
+class RelayAdmin(admin.ModelAdmin):
+    list_display = ['id', 'owner_id', 'parent_id', 'time_created']

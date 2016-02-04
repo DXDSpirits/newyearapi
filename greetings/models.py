@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 
 from users.models import UserProfile
 
+import requests
 import jsonfield
 
 
@@ -84,3 +85,28 @@ class Inspiration(models.Model):
 
     def __unicode__(self):
         return unicode(self.text)
+
+
+class Relay(models.Model):
+    owner_id = models.IntegerField(blank=True, null=True, unique=True)
+    parent_id = models.IntegerField(blank=True, null=True, db_index=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+
+
+def relay_postsave(sender, instance, created, raw, **kwargs):
+    if created:
+        profile = UserProfile.objects.filter(user_id=instance.owner_id).first()
+        greeting = Greeting.objects.filter(status='online', owner_id=instance.owner_id).first()
+        if greeting is not None and profile is not None:
+            province = greeting.places.get(category='province')
+            url = 'http://testpayapi.wedfairy.com/api/v1/new_year/new_relation.json'
+            params = {'api_key': 'f4c47fdb0a42dd2e4807716efaff039a17ea6d38'}
+            data = {'user_id': instance.owner_id,
+                    'parent_id': instance.parent_id,
+                    'voice_id': greeting.id,
+                    'nick_name': profile.name,
+                    'avatar': profile.avatar,
+                    'province_id': province.id,
+                    'province_name': province.name}
+            requests.post(url, json=data, params=params)
+post_save.connect(relay_postsave, sender=Relay)

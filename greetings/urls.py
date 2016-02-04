@@ -3,7 +3,7 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from .apiviews import PlaceViewSet, GreetingViewSet, PfopNotifyView, UserGreetingView, \
     ProvinceListView, CityListView, DistrictListView, InspirationViewSet, LikeViewSet, \
-    ShareViewSet
+    ShareViewSet, RelayViewSet
 
 router = routers.DefaultRouter()
 router.register(r'place/province', ProvinceListView, base_name='place_list_of_provinces')
@@ -14,6 +14,7 @@ router.register(r'greeting', GreetingViewSet)
 router.register(r'inspiration', InspirationViewSet)
 router.register(r'like', LikeViewSet)
 router.register(r'share', ShareViewSet)
+router.register(r'relay', RelayViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
