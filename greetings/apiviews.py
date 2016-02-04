@@ -7,7 +7,8 @@ from django.utils.six.moves.urllib import parse as urlparse
 from rest_framework import views, viewsets, pagination, response, status, decorators, \
     renderers, mixins, throttling, permissions
 from rest_framework.generics import get_object_or_404
-from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin
+
+from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin, DetailSerializerMixin
 
 from qiniu import Auth, PersistentFop, op_save
 
@@ -102,9 +103,15 @@ class GreetingPagination(pagination.PageNumberPagination):
     page_size_query_param = 'limit'
 
 
-class GreetingViewSet(viewsets.ModelViewSet):
+class GreetingViewSet(DetailSerializerMixin,
+                      mixins.CreateModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
     queryset = Greeting.objects.filter(status='online').order_by('-id')
+    queryset_detail = Greeting.objects.exclude(status='raw').order_by('-id')
     serializer_class = GreetingSerializer
+    serializer_detail_class = GreetingSerializer
     filter_class = GreetingFilter
     pagination_class = GreetingPagination
     permission_classes = [IsOwnerOrReadOnly]
