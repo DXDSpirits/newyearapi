@@ -109,5 +109,5 @@ def relay_postsave(sender, instance, created, raw, **kwargs):
                     'province_id': province.id,
                     'province_name': province.name}
             requests.post(url, json=data, params=params)
-        Relay.objects.get_or_create(owner_id=instance.parent_id)
+        Relay.objects.get_or_create(owner_id=instance.parent_id, defaults={'parent_id': 0})
 post_save.connect(relay_postsave, sender=Relay)
