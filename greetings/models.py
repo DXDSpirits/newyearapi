@@ -96,7 +96,7 @@ class Relay(models.Model):
 def relay_postsave(sender, instance, created, raw, **kwargs):
     if created and instance.parent_id is not None:
         profile = UserProfile.objects.filter(user_id=instance.owner_id).first()
-        greeting = Greeting.objects.filter(status='online', owner_id=instance.owner_id).first()
+        greeting = Greeting.objects.filter(owner_id=instance.owner_id).last()
         if greeting is not None and profile is not None:
             province = greeting.places.get(category='province')
             url = 'http://testpayapi.wedfairy.com/api/v1/new_year/new_relation.json'
