@@ -20,18 +20,27 @@ from .permissions import IsOwnerOrReadOnly
 
 import django_filters
 
+import logging
+logger = logging.getLogger('apps')
+
 
 class PfopNotifyView(views.APIView):
     def post(self, request):
         inputKey = request.data['inputKey']
         greeting = Greeting.objects.filter(key=inputKey).first()
         if greeting is not None and greeting.status == 'raw':
-            newkey = request.data['items'][0]['key']
-            greeting.data = request.data
-            greeting.url = greeting.url.replace(greeting.key, newkey)
-            greeting.key = ''
-            greeting.status = 'online'
-            greeting.save()
+            try:
+                newkey = request.data['items'][0]['key']
+                greeting.data = request.data
+                greeting.url = greeting.url.replace(greeting.key, newkey)
+                greeting.key = ''
+                greeting.status = 'online'
+                greeting.save()
+            except Exception as e:
+                greeting.data = request.data
+                greeting.save()
+                logger.error('Pfop Notify Error. %s.' % e, extra={'request': self.request})
+                return response.Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
         return response.Response(status.HTTP_204_NO_CONTENT)
 
 
