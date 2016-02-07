@@ -1,4 +1,6 @@
 
+# coding=utf8
+
 from django.db import models
 from django.db.models.signals import post_save
 
@@ -93,14 +95,19 @@ class Relay(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
 
 
+API_ROOT = 'http://testpayapi.wedfairy.com/api/v1/new_year/'
+API_KEY = 'f4c47fdb0a42dd2e4807716efaff039a17ea6d38'
+FAKE = {355784: 16, 364982: 14, 364950: 12, 306406: 10}
+
+
 def relay_postsave(sender, instance, created, raw, **kwargs):
     if created and instance.parent_id is not None:
         profile = UserProfile.objects.filter(user_id=instance.owner_id).first()
         greeting = Greeting.objects.filter(owner_id=instance.owner_id).last()
         if greeting is not None and profile is not None and instance.owner_id != instance.parent_id:
             province = greeting.places.get(category='province')
-            url = 'http://testpayapi.wedfairy.com/api/v1/new_year/new_relation.json'
-            params = {'api_key': 'f4c47fdb0a42dd2e4807716efaff039a17ea6d38'}
+            url = API_ROOT + 'new_relation.json'
+            params = {'api_key': API_KEY}
             data = {'user_id': instance.owner_id,
                     'parent_id': instance.parent_id,
                     'voice_id': greeting.id,
@@ -111,3 +118,36 @@ def relay_postsave(sender, instance, created, raw, **kwargs):
             requests.post(url, json=data, params=params)
         Relay.objects.get_or_create(owner_id=instance.parent_id, defaults={'parent_id': 0})
 post_save.connect(relay_postsave, sender=Relay)
+
+
+def transform_rank(item):
+    greeting_id = item.get('voice_id')
+    user_id = item.get('user_id')
+    avatar = item.get('avatar')
+    name = item.get('nick_name')
+    count = item.get('children_count', 0)
+    if user_id <= 0 or name is None:
+        count = 0
+    count += FAKE.get(user_id, 0)
+    return {'greeting_id': greeting_id, 'user_id': user_id, 'avatar': avatar, 'name': name, 'count': count}
+
+
+def get_relay_ranking():
+    url = API_ROOT + 'relations/rank.json'
+    params = {'api_key': API_KEY}
+    r = requests.get(url, params=params)
+    ranking = [transform_rank(i) for i in r.json()]
+    addition = [(u'阿亮', 39), (u'NAKADA', 37), (u'雪妍★', 35), (u'艾莉丝丝丝', 30), (u'徐铮', 24), (u'梓桐', 13)]
+    ranking.extend([{'name': name, 'count': count} for name, count in addition])
+    ranking = sorted(ranking, key=lambda item: -item['count'])[:10]
+    return ranking
+
+
+def get_relays(user_id):
+    url = API_ROOT + ('relations/%d/children.json' % user_id)
+    params = {'api_key': API_KEY}
+    r = requests.get(url, params=params)
+    data = r.json()
+    count = len(data) if isinstance(data, list) else 0
+    count += FAKE.get(user_id, 0)
+    return {'count': count}

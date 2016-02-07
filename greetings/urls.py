@@ -1,9 +1,10 @@
 
 from django.conf.urls import url, include
+from django.views.decorators.cache import cache_page
 from rest_framework import routers
 from .apiviews import PlaceViewSet, GreetingViewSet, PfopNotifyView, UserGreetingView, \
     ProvinceListView, CityListView, DistrictListView, InspirationViewSet, LikeViewSet, \
-    ShareViewSet, RelayViewSet
+    ShareViewSet, RelayViewSet, RankingView
 
 router = routers.DefaultRouter()
 router.register(r'place/province', ProvinceListView, base_name='place_list_of_provinces')
@@ -20,4 +21,5 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^pfop-notify/$', PfopNotifyView.as_view(), name='greetings-pfop-notify'),
     url(r'^usergreeting/(?P<pk>\d+)/$', UserGreetingView.as_view(), name='greeting-from-user'),
+    url(r'^ranking/((?P<pk>\d+)\/)?$', cache_page(180 * 60)(RankingView.as_view())),
 ]

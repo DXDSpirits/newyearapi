@@ -13,6 +13,7 @@ from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin, 
 from qiniu import Auth, PersistentFop, op_save
 
 from .models import Place, Greeting, Like, Inspiration, Share
+from .models import get_relay_ranking, get_relays
 from .serializers import PlaceSerializer, PlaceGreetingSerializer, GreetingSerializer, \
     LikeSerializer, InspirationSerializer, ShareSerializer, RelaySerializer
 from .permissions import IsOwnerOrReadOnly
@@ -231,3 +232,12 @@ class RelayViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         serializer.save(owner_id=self.request.user.id)
+
+
+class RankingView(views.APIView):
+    def get(self, request, pk=None):
+        if pk is None:
+            data = get_relay_ranking()
+        else:
+            data = get_relays(int(pk))
+        return response.Response(data)
