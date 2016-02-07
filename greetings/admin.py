@@ -11,6 +11,12 @@ class PlaceAdmin(admin.ModelAdmin):
 
 @admin.register(Greeting)
 class GreetingAdmin(admin.ModelAdmin):
+    def pfop_audio(self, request, queryset):
+        for greeting in queryset:
+            if greeting.statue == 'raw':
+                greeting.perform_pfop()
+    pfop_audio.short_description = "Pfop selected audio"
+
     def placelist(self, instance):
         return ', '.join([p.name for p in instance.places.all()])
     placelist.short_description = 'Places'
@@ -31,6 +37,7 @@ class GreetingAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'owner_id', 'time_created', 'status', 'key', 'url', 'description', 'placelist']
     filter_horizontal = ['places']
+    actions = ['pfop_audio']
 
 
 @admin.register(Inspiration)

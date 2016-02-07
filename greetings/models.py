@@ -1,10 +1,15 @@
 
 # coding=utf8
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
+from django.core.urlresolvers import reverse
+from django.utils.six.moves.urllib import parse as urlparse
 
 from users.models import UserProfile
+
+from qiniu import Auth, PersistentFop, op_save
 
 import requests
 import jsonfield
@@ -47,6 +52,23 @@ class Greeting(models.Model):
     @property
     def profile(self):
         return UserProfile.objects.filter(user_id=self.owner_id).first()
+
+    def perform_pfop(self):
+        access_key = settings.QINIU['ACCESS_KEY']
+        secret_key = settings.QINIU['SECRET_KEY']
+        origin = self.request.build_absolute_uri('/')
+        path = reverse('greetings-pfop-notify')
+        notify_url = urlparse.urljoin(origin, path)
+
+        auth = Auth(access_key, secret_key)
+        pfop = PersistentFop(auth, 'tatmusic', 'wechataudio', notify_url)
+        op = op_save('avthumb/mp3', 'tatmusic', self.key + '.mp3')
+        ret, info = pfop.execute(self.key, [op])
+        if self.data is None:
+            self.data = ret
+        else:
+            self.data.update(ret)
+        self.save(update_fields=['data'])
 
     def __unicode__(self):
         return unicode(self.url)
