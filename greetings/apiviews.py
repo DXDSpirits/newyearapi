@@ -200,7 +200,7 @@ class LikeViewSet(mixins.ListModelMixin,
         return super(LikeViewSet, self).create(request, *args, **kwargs)
 
 
-class InspirationViewSet(ReadOnlyCacheResponseAndETAGMixin,
+class InspirationViewSet(  # ReadOnlyCacheResponseAndETAGMixin,
                          viewsets.ReadOnlyModelViewSet):
     class Pagination(pagination.PageNumberPagination):
         page_size = 3
@@ -212,7 +212,8 @@ class InspirationViewSet(ReadOnlyCacheResponseAndETAGMixin,
             model = Inspiration
             fields = ['place']
 
-    queryset = Inspiration.objects.annotate(num_places=Count('places')).order_by('num_places')
+    # queryset = Inspiration.objects.annotate(num_places=Count('places')).order_by('num_places')
+    queryset = Inspiration.objects.order_by('?')
     serializer_class = InspirationSerializer
     filter_class = Filter
     pagination_class = Pagination
