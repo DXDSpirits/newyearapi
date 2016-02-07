@@ -13,7 +13,7 @@ class PlaceAdmin(admin.ModelAdmin):
 class GreetingAdmin(admin.ModelAdmin):
     def pfop_audio(self, request, queryset):
         for greeting in queryset:
-            if greeting.statue == 'raw':
+            if greeting.status == 'raw':
                 greeting.perform_pfop()
     pfop_audio.short_description = "Pfop selected audio"
 
