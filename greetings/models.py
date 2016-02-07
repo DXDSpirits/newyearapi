@@ -118,7 +118,7 @@ class Relay(models.Model):
 
 API_ROOT = 'http://testpayapi.wedfairy.com/api/v1/new_year/'
 API_KEY = 'f4c47fdb0a42dd2e4807716efaff039a17ea6d38'
-FAKE = {355784: 16, 364982: 14, 364950: 12, 306406: 10}
+FAKE = {355784: 16, 9387: 18, 364982: 14, 364950: 12, 306406: 10}
 
 
 def relay_postsave(sender, instance, created, raw, **kwargs):
