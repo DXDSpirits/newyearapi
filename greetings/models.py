@@ -53,10 +53,9 @@ class Greeting(models.Model):
     def profile(self):
         return UserProfile.objects.filter(user_id=self.owner_id).first()
 
-    def perform_pfop(self):
+    def perform_pfop(self, origin):
         access_key = settings.QINIU['ACCESS_KEY']
         secret_key = settings.QINIU['SECRET_KEY']
-        origin = self.request.build_absolute_uri('/')
         path = reverse('greetings-pfop-notify')
         notify_url = urlparse.urljoin(origin, path)
 

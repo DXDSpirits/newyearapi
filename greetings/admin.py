@@ -12,9 +12,10 @@ class PlaceAdmin(admin.ModelAdmin):
 @admin.register(Greeting)
 class GreetingAdmin(admin.ModelAdmin):
     def pfop_audio(self, request, queryset):
+        origin = request.build_absolute_uri('/')
         for greeting in queryset:
             if greeting.status == 'raw':
-                greeting.perform_pfop()
+                greeting.perform_pfop(origin)
     pfop_audio.short_description = "Pfop selected audio"
 
     def placelist(self, instance):
