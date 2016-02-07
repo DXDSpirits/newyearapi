@@ -158,7 +158,7 @@ def get_relay_ranking():
     params = {'api_key': API_KEY}
     r = requests.get(url, params=params)
     ranking = [transform_rank(i) for i in r.json()]
-    addition = [(u'阿亮', 39), (u'NAKADA', 37), (u'雪妍★', 35), (u'艾莉丝丝丝', 30), (u'徐铮', 24), (u'梓桐', 13)]
+    addition = [(u'阿亮', 39), (u'NAKADA', 37), (u'雪妍★', 35), (u'艾莉丝丝丝', 30), (u'徐铮', 24)]  # , (u'梓桐', 13)]
     ranking.extend([{'name': name, 'count': count} for name, count in addition])
     ranking = sorted(ranking, key=lambda item: -item['count'])[:10]
     return ranking
