@@ -164,8 +164,8 @@ def get_relay_ranking():
     ranking = [transform_rank(i) for i in r.json()]
     addition = [(u'阿亮', 42), (u'NAKADA', 53), (u'雪妍★', 45), (u'艾莉丝丝丝', 39),
                 (u'徐铮', 32), (u'梓桐', 27), (u'Fang', 29), (u'小Lea', 36)]
-    addition = [(u'阿亮', 42), (u'NAKADA', 41), (u'雪妍★', 45), (u'艾莉丝丝丝', 35),
-                (u'徐铮', 25), (u'梓桐', 16)]
+    # addition = [(u'阿亮', 42), (u'NAKADA', 41), (u'雪妍★', 45), (u'艾莉丝丝丝', 35),
+    #             (u'徐铮', 25), (u'梓桐', 16)]
     ranking.extend([{'name': name, 'count': count} for name, count in addition])
     ranking = sorted(ranking, key=lambda item: -item['count'])[:15]
     return ranking
