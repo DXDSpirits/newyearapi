@@ -115,6 +115,10 @@ class Relay(models.Model):
     parent_id = models.IntegerField(blank=True, null=True, db_index=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def profile(self):
+        return UserProfile.objects.filter(user_id=self.owner_id).first()
+
 
 API_ROOT = 'http://testpayapi.wedfairy.com/api/v1/new_year/'
 API_KEY = 'f4c47fdb0a42dd2e4807716efaff039a17ea6d38'

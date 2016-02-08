@@ -73,7 +73,9 @@ class ShareSerializer(serializers.ModelSerializer):
 
 
 class RelaySerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer(read_only=True)
+
     class Meta:
         model = Relay
-        fields = ['id', 'owner_id', 'parent_id', 'time_created']
+        fields = ['id', 'owner_id', 'profile', 'parent_id', 'time_created']
         read_only_fields = ['owner_id']
