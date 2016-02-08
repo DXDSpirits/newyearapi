@@ -235,6 +235,7 @@ class ShareViewSet(mixins.CreateModelMixin,
 
 
 class RelayViewSet(mixins.CreateModelMixin,
+                   mixins.ListModelMixin,
                    viewsets.GenericViewSet):
     queryset = Share.objects.all()
     serializer_class = RelaySerializer
