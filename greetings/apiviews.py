@@ -12,7 +12,7 @@ from rest_framework_extensions.mixins import ReadOnlyCacheResponseAndETAGMixin, 
 
 from qiniu import Auth, PersistentFop, op_save
 
-from .models import Place, Greeting, Like, Inspiration, Share
+from .models import Place, Greeting, Like, Inspiration, Share, Relay
 from .models import get_relay_ranking, get_relays
 from .serializers import PlaceSerializer, PlaceGreetingSerializer, GreetingSerializer, \
     LikeSerializer, InspirationSerializer, ShareSerializer, RelaySerializer
@@ -237,7 +237,7 @@ class ShareViewSet(mixins.CreateModelMixin,
 class RelayViewSet(mixins.CreateModelMixin,
                    mixins.ListModelMixin,
                    viewsets.GenericViewSet):
-    queryset = Share.objects.all()
+    queryset = Relay.objects.all()
     serializer_class = RelaySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
