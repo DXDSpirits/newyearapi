@@ -122,7 +122,7 @@ class Relay(models.Model):
 
 API_ROOT = 'http://testpayapi.wedfairy.com/api/v1/new_year/'
 API_KEY = 'f4c47fdb0a42dd2e4807716efaff039a17ea6d38'
-FAKE = {355784: 16, 9387: 18, 364982: 14, 364950: 12, 306406: 10}
+FAKE = {355784: 16, 9387: 10, 364982: 14, 364950: 12, 306406: 10, 15546: 8}
 
 
 def relay_postsave(sender, instance, created, raw, **kwargs):
@@ -164,8 +164,6 @@ def get_relay_ranking():
     ranking = [transform_rank(i) for i in r.json()]
     addition = [(u'阿亮', 42), (u'NAKADA', 53), (u'雪妍★', 45), (u'艾莉丝丝丝', 39),
                 (u'徐铮', 32), (u'梓桐', 27), (u'Fang', 29), (u'小Lea', 36)]
-    # addition = [(u'阿亮', 42), (u'NAKADA', 41), (u'雪妍★', 45), (u'艾莉丝丝丝', 35),
-    #             (u'徐铮', 25), (u'梓桐', 16)]
     ranking.extend([{'name': name, 'count': count} for name, count in addition])
     ranking = sorted(ranking, key=lambda item: -item['count'])[:15]
     return ranking
