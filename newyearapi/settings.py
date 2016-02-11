@@ -259,6 +259,6 @@ try:
     LOCAL_SETTINGS  # @UndefinedVariable
 except NameError:
     try:
-        from settings_local import *  # @UnusedWildImport
+        from .settings_local import *  # @UnusedWildImport
     except ImportError:
         pass
